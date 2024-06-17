@@ -1,0 +1,59 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# Database files
+*.local
+*.sublime-workspace
+*.sublime-project
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env
+
+# MongoDB data files
+/data/db/
+
+# Vscode specific files
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDE files
+.idea/
+
+# Typescript compiled files
+dist/
+build/
+
+# Production build
+/public/
+
+# Temporary files
+temp/
+tmp/
+
+# Compiled source
+lib/
