@@ -54,17 +54,7 @@ async function login(req, res) {
 }
 
 function getUserInfoFromToken(req, res) {
-  const authHeader = req.headers.authorization
-
-  if (authHeader == null) res.status(401)
-  else {
-    const token = authHeader.split(' ')[1]
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-      if (err) return res.status(403)
-      else return res.status(200).json({ user: user })
-    })
-  }
-
+  res.status(200).json({ user: req.user })
 }
 
 module.exports = { createUser, login, getUserInfoFromToken }
