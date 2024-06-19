@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
     depends_on:
       auth-service:
         condition: service_healthy
@@ -21,10 +19,8 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
     depends_on:
-      mongo:
+      mongo-users:
         condition: service_healthy
     healthcheck:
       test:
@@ -42,7 +38,7 @@ services:
           action: sync
         - path: ./auth/package.json
           action: rebuild
-  mongo:
+  mongo-users:
     image: mongo:latest
     ports:
       - "27017:27017"
@@ -56,6 +52,45 @@ services:
       timeout: 10s
       retries: 5
     volumes:
-      - mongo-data:/data/db
+      - mongo-users-data:/data/db
+  product-service:
+    build:
+      context: ./product
+      dockerfile: Dockerfile
+    depends_on:
+      mongo-products:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:8082/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    develop:
+      watch:
+        - path: ./product/
+          target: /app/
+          action: sync
+        - path: ./product/package.json
+          action: rebuild
+  mongo-products:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017 --quiet"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - mongo-products-data:/data/db
 volumes:
-  mongo-data:
+  mongo-users-data:
+  mongo-products-data:

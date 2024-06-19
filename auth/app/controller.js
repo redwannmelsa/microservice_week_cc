@@ -5,12 +5,13 @@ const bcrypt = require('bcrypt')
 const User = require('./model')
 
 async function createUser(req, res) {
-  const { name, email, password } = req.body
+  const { name, email, password, role } = req.body
   try {
     const newUser = new User({
       name,
       email,
-      password
+      password,
+      role
     })
 
     await newUser.save()
@@ -36,11 +37,11 @@ async function login(req, res) {
         res.status(401).json({ error: 'Wrong password' })
       } else {
         res.status(200).json({
-          test: "haha",
           jwt: jwt.sign(
             {
               name: user.name,
               email: user.email,
+              role: user.role,
               id: user._id
             },
             process.env.TOKEN_SECRET)
@@ -52,4 +53,18 @@ async function login(req, res) {
   }
 }
 
-module.exports = { createUser, login }
+function getUserInfoFromToken(req, res) {
+  const authHeader = req.headers.authorization
+
+  if (authHeader == null) res.status(401)
+  else {
+    const token = authHeader.split(' ')[1]
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+      if (err) return res.status(403)
+      else return res.status(200).json({ user: user })
+    })
+  }
+
+}
+
+module.exports = { createUser, login, getUserInfoFromToken }

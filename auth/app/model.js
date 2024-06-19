@@ -26,6 +26,12 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Password must be at least 6 characters long!'
     }
+  },
+  role: {
+    type: String,
+    enum: ['Admin', 'User'],
+    default: 'User',
+    required: [true, 'Role is required']
   }
 });
 
